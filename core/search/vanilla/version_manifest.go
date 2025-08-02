@@ -1,6 +1,11 @@
 package vanilla
 
-import "time"
+import (
+	"net/http"
+	"time"
+
+	"github.com/yuioto/gml/internal/utils"
+)
 
 const VersionManifestV2URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json"
 
@@ -33,4 +38,12 @@ const (
 type VersionManifest struct {
 	Latest   Latest     `json:"latest"`
 	Versions []Versions `json:"versions"`
+}
+
+func GetVersionManifest() (VersionManifest, error) {
+	var versionManifest VersionManifest
+	if err := utils.FetchJSON(http.DefaultClient, VersionManifestV2URL, &versionManifest); err != nil {
+		return VersionManifest{}, err
+	}
+	return versionManifest, nil
 }

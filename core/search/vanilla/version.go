@@ -1,6 +1,13 @@
 package vanilla
 
-import "time"
+import (
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/rs/zerolog/log"
+	"github.com/yuioto/gml/internal/utils"
+)
 
 // Arguments
 type Arguments struct {
@@ -102,4 +109,22 @@ type Version struct {
 	ReleaseTime            time.Time   `json:"releaseTime"`
 	Time                   time.Time   `json:"time"`
 	Type                   ReleaseType `json:"type"`
+}
+
+func getVersionFromURL(url string) (Version, error) {
+	var versionInfo Version
+	if err := utils.FetchJSON(http.DefaultClient, url, &versionInfo); err != nil {
+		return versionInfo, err
+	}
+	return versionInfo, nil
+}
+
+func GetVersion(versionManifest VersionManifest, versionId string) (Version, error) {
+	for _, version := range versionManifest.Versions {
+		if version.ID == versionId {
+			return getVersionFromURL(version.URL)
+		}
+	}
+	log.Error().Str("version", versionId).Msg("not fount")
+	return Version{}, fmt.Errorf("not fount version")
 }
