@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/yuioto/gml/cmd"
@@ -24,7 +26,19 @@ func main() {
 		Suggest:               true,
 	}
 
+	if isXCommand() {
+		os.Args = append([]string{os.Args[0], "x"}, os.Args[1:]...)
+	}
+
 	if err := app.Run(context.Background(), os.Args); err != nil {
 		log.Fatal().Err(err).Msg("Application failed to start")
 	}
+}
+
+func isXCommand() bool {
+	name := filepath.Base(os.Args[0])
+	name = strings.ToLower(name)
+	name = strings.TrimSuffix(name, ".exe")
+
+	return name == "gmlx"
 }

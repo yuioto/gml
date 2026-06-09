@@ -13,4 +13,5 @@ var Commands = []*cli.Command{
 	ExportCmd, // Export integration package
 	ImportCmd, // Import integration package
 	SearchCmd, // Search for available mods, resources
+	XCmd,      // Execute a Minecraft version (experimental)
 }
